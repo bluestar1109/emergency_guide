@@ -1,0 +1,240 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  
+  .app { max-width: 680px; padding: 0; }
+  
+  .header { display: flex; align-items: center; gap: 12px; padding: 1.5rem 0 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 1.5rem; }
+  .header-icon { width: 44px; height: 44px; background: #FCEBEB; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .header-icon i { font-size: 22px; color: #A32D2D; }
+  .header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+  .header p { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+
+  .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .quick-btn { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 10px; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .quick-btn:hover { border-color: var(--color-border-secondary); background: var(--color-background-primary); }
+  .quick-btn i { display: block; font-size: 22px; margin-bottom: 6px; }
+  .quick-btn span { font-size: 12px; color: var(--color-text-secondary); display: block; line-height: 1.3; }
+  .quick-btn.c-red i { color: #A32D2D; }
+  .quick-btn.c-amber i { color: #854F0B; }
+  .quick-btn.c-blue i { color: #185FA5; }
+  .quick-btn.c-green i { color: #3B6D11; }
+  .quick-btn.c-purple i { color: #534AB7; }
+  .quick-btn.c-teal i { color: #0F6E56; }
+
+  .input-area { margin-bottom: 1.5rem; }
+  .input-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px; display: block; }
+  .input-row { display: flex; gap: 8px; }
+  .symptom-input { flex: 1; padding: 10px 14px; font-size: 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); outline: none; }
+  .symptom-input:focus { border-color: #A32D2D; box-shadow: 0 0 0 3px rgba(163,45,45,0.1); }
+  .ask-btn { padding: 10px 18px; background: #A32D2D; color: #fff; border: none; border-radius: var(--border-radius-md); font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: var(--font-sans); display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
+  .ask-btn:hover { background: #791F1F; }
+  .ask-btn:disabled { background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); cursor: not-allowed; }
+
+  .response-area { display: none; }
+  .response-area.active { display: block; }
+  
+  .severity-bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--border-radius-md); margin-bottom: 12px; border: 0.5px solid; }
+  .severity-bar.sev-high { background: #FCEBEB; border-color: #F7C1C1; }
+  .severity-bar.sev-mid { background: #FAEEDA; border-color: #FAC775; }
+  .severity-bar.sev-low { background: #EAF3DE; border-color: #C0DD97; }
+  .severity-bar i { font-size: 18px; }
+  .severity-bar.sev-high i { color: #A32D2D; }
+  .severity-bar.sev-mid i { color: #854F0B; }
+  .severity-bar.sev-low i { color: #3B6D11; }
+  .severity-bar .sev-text { font-size: 13px; font-weight: 500; }
+  .severity-bar.sev-high .sev-text { color: #A32D2D; }
+  .severity-bar.sev-mid .sev-text { color: #854F0B; }
+  .severity-bar.sev-low .sev-text { color: #3B6D11; }
+
+  .steps-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .steps-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .steps-title i { font-size: 16px; color: var(--color-text-secondary); }
+  
+  .step-item { display: flex; gap: 12px; margin-bottom: 14px; }
+  .step-item:last-child { margin-bottom: 0; }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: #FCEBEB; color: #A32D2D; font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-content { flex: 1; }
+  .step-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+  .step-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+
+  .warn-card { background: #FAEEDA; border: 0.5px solid #FAC775; border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 12px; font-size: 13px; color: #854F0B; display: flex; gap: 8px; align-items: flex-start; }
+  .warn-card i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .emergency-notice { background: #FCEBEB; border: 0.5px solid #F7C1C1; border-radius: var(--border-radius-md); padding: 10px 14px; margin-bottom: 12px; font-size: 13px; color: #A32D2D; display: flex; gap: 8px; align-items: center; font-weight: 500; }
+  .emergency-notice i { font-size: 18px; }
+
+  .loading-dots { display: inline-flex; gap: 4px; align-items: center; }
+  .loading-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--color-text-secondary); animation: dot-blink 1.2s infinite; }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot-blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+  
+  .loading-card { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .loading-card p { font-size: 13px; color: var(--color-text-secondary); }
+
+  .reset-btn { font-size: 13px; color: var(--color-text-secondary); background: none; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 7px 14px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: var(--font-sans); transition: all 0.15s; }
+  .reset-btn:hover { border-color: var(--color-border-secondary); color: var(--color-text-primary); }
+
+  .disclaimer { font-size: 11px; color: var(--color-text-tertiary); margin-top: 1rem; padding-top: 1rem; border-top: 0.5px solid var(--color-border-tertiary); line-height: 1.6; }
+</style>
+
+<h2 class="sr-only">AI 기반 스마트 응급처치 가이드 앱</h2>
+
+<div class="app">
+  <div class="header">
+    <div class="header-icon"><i class="ti ti-heart-plus" aria-hidden="true"></i></div>
+    <div>
+      <h1>응급처치 가이드</h1>
+      <p>증상을 입력하면 AI가 맞춤 응급처치 방법을 안내합니다</p>
+    </div>
+  </div>
+
+  <div class="quick-grid" id="quickGrid">
+    <button class="quick-btn c-red" onclick="setSymptom('심한 출혈이 멈추지 않아요')">
+      <i class="ti ti-droplet" aria-hidden="true"></i>
+      <span>출혈</span>
+    </button>
+    <button class="quick-btn c-amber" onclick="setSymptom('화상을 입었어요')">
+      <i class="ti ti-flame" aria-hidden="true"></i>
+      <span>화상</span>
+    </button>
+    <button class="quick-btn c-blue" onclick="setSymptom('의식을 잃었어요 / 쓰러졌어요')">
+      <i class="ti ti-user-x" aria-hidden="true"></i>
+      <span>의식 불명</span>
+    </button>
+    <button class="quick-btn c-purple" onclick="setSymptom('목에 음식이 걸렸어요')">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i>
+      <span>기도 폐쇄</span>
+    </button>
+    <button class="quick-btn c-teal" onclick="setSymptom('뼈가 부러진 것 같아요 / 골절')">
+      <i class="ti ti-bone" aria-hidden="true"></i>
+      <span>골절</span>
+    </button>
+    <button class="quick-btn c-green" onclick="setSymptom('독성 물질을 삼켰어요')">
+      <i class="ti ti-pill" aria-hidden="true"></i>
+      <span>중독</span>
+    </button>
+  </div>
+
+  <div class="input-area">
+    <label class="input-label" for="symptomInput">증상 또는 상황을 직접 입력하세요</label>
+    <div class="input-row">
+      <input class="symptom-input" id="symptomInput" type="text" placeholder="예: 넘어져서 발목이 부었어요, 코피가 나요..." />
+      <button class="ask-btn" id="askBtn" onclick="askAI()">
+        <i class="ti ti-sparkles" aria-hidden="true"></i>
+        AI 안내받기
+      </button>
+    </div>
+  </div>
+
+  <div class="response-area" id="responseArea"></div>
+
+  <p class="disclaimer">⚠️ 이 앱은 정보 제공 목적이며 의료 진단을 대체하지 않습니다. 심각한 응급 상황에는 즉시 119에 연락하세요.</p>
+</div>
+
+<script>
+function setSymptom(text) {
+  document.getElementById('symptomInput').value = text;
+  document.getElementById('symptomInput').focus();
+}
+
+async function askAI() {
+  const input = document.getElementById('symptomInput');
+  const symptom = input.value.trim();
+  if (!symptom) return;
+
+  const btn = document.getElementById('askBtn');
+  const area = document.getElementById('responseArea');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+
+  area.className = 'response-area active';
+  area.innerHTML = `<div class="loading-card"><div class="loading-dots"><span></span><span></span><span></span></div><p>AI가 응급처치 방법을 분석하고 있습니다...</p></div>`;
+
+  const systemPrompt = `당신은 응급처치 전문 안내 AI입니다. 사용자가 증상이나 응급 상황을 설명하면, 즉시 실행 가능한 응급처치 방법을 JSON 형식으로만 반환하세요. 다른 텍스트나 마크다운 없이 순수 JSON만 반환하세요.
+
+JSON 형식:
+{
+  "severity": "high" | "mid" | "low",
+  "severityLabel": "즉시 119 신고 필요" | "주의 관찰 필요" | "가정 처치 가능",
+  "needsEmergency": true | false,
+  "steps": [
+    { "title": "단계 제목", "desc": "구체적인 행동 설명 (1-2문장)" }
+  ],
+  "warning": "이것만은 절대 하지 마세요 (금지 사항 1가지)",
+  "followUp": "처치 후 해야 할 것 (1문장)"
+}
+
+steps는 3~5개로 구성하세요. 실용적이고 즉시 실행 가능한 내용으로 작성하세요.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: `응급 상황: ${symptom}` }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content.map(i => i.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    renderResult(parsed, symptom);
+  } catch (e) {
+    area.innerHTML = `<div class="warn-card"><i class="ti ti-alert-triangle" aria-hidden="true"></i><span>안내를 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.</span></div>`;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-sparkles" aria-hidden="true"></i> AI 안내받기';
+}
+
+function renderResult(data, symptom) {
+  const area = document.getElementById('responseArea');
+  
+  const sevClass = { high: 'sev-high', mid: 'sev-mid', low: 'sev-low' }[data.severity] || 'sev-mid';
+  const sevIcon = { high: 'ti-alert-triangle', mid: 'ti-info-circle', low: 'ti-circle-check' }[data.severity] || 'ti-info-circle';
+
+  const stepsHtml = data.steps.map((s, i) => `
+    <div class="step-item">
+      <div class="step-num">${i+1}</div>
+      <div class="step-content">
+        <div class="step-title">${s.title}</div>
+        <div class="step-desc">${s.desc}</div>
+      </div>
+    </div>`).join('');
+
+  const emergencyHtml = data.needsEmergency
+    ? `<div class="emergency-notice"><i class="ti ti-phone-call" aria-hidden="true"></i>지금 바로 119에 전화하세요</div>` : '';
+
+  area.innerHTML = `
+    <div class="severity-bar ${sevClass}">
+      <i class="ti ${sevIcon}" aria-hidden="true"></i>
+      <span class="sev-text">${data.severityLabel}</span>
+    </div>
+    ${emergencyHtml}
+    <div class="steps-card">
+      <div class="steps-title"><i class="ti ti-list-check" aria-hidden="true"></i>응급처치 단계별 안내</div>
+      ${stepsHtml}
+    </div>
+    ${data.warning ? `<div class="warn-card"><i class="ti ti-ban" aria-hidden="true"></i><span><strong>주의:</strong> ${data.warning}</span></div>` : ''}
+    ${data.followUp ? `<div class="warn-card" style="background:var(--color-background-info);border-color:#B5D4F4;color:#185FA5;"><i class="ti ti-arrow-right" aria-hidden="true"></i><span>${data.followUp}</span></div>` : ''}
+    <button class="reset-btn" onclick="resetApp()"><i class="ti ti-refresh" aria-hidden="true"></i>다른 증상 확인하기</button>
+  `;
+}
+
+function resetApp() {
+  document.getElementById('symptomInput').value = '';
+  document.getElementById('responseArea').className = 'response-area';
+  document.getElementById('responseArea').innerHTML = '';
+}
+
+document.getElementById('symptomInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') askAI();
+});
+</script>
